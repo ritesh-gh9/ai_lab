@@ -1,0 +1,109 @@
+def dfs(start, goal):
+    stack = [start]
+    visited = {start}
+    parent = {start: None}
+
+    while stack:
+        state = stack.pop()
+
+        # Goal reached
+        if state == goal:
+            path = []
+
+            while state is not None:
+                path.append(state)
+                state = parent[state]
+
+            path.reverse()
+            return path
+
+        # Find blank position
+        pos = state.index('_')
+        row = pos // 3
+        col = pos % 3
+
+        # Possible moves
+        moves = []
+
+        if row > 0:       # Up
+            moves.append(pos - 3)
+
+        if row < 2:       # Down
+            moves.append(pos + 3)
+
+        if col > 0:       # Left
+            moves.append(pos - 1)
+
+        if col < 2:       # Right
+            moves.append(pos + 1)
+
+        # Generate new states
+        for new_pos in moves:
+            s = list(state)
+            s[pos], s[new_pos] = s[new_pos], s[pos]
+            new_state = ''.join(s)
+
+            if new_state not in visited:
+                visited.add(new_state)
+                parent[new_state] = state
+                stack.append(new_state)
+
+    return None
+
+
+def valid_state(state):
+    return (
+        len(state) == 9
+        and set(state) == set("12345678_")
+    )
+
+
+# Input
+start = input("Enter start state: ").strip()
+goal = input("Enter goal state: ").strip()
+
+# Validate input
+if not valid_state(start) or not valid_state(goal):
+    print("Invalid state!")
+    print("Use exactly 9 characters containing 1-8 and _.")
+else:
+    solution = dfs(start, goal)
+
+    if solution:
+        print("\nSolution found!")
+        print("Number of moves:", len(solution) - 1)
+        print()
+
+        for i, state in enumerate(solution):
+            print("Step", i)
+            print(state[:3])
+            print(state[3:6])
+            print(state[6:])
+            print()
+    else:
+        print("No solution found.")
+output:
+Enter start state: 12345678_
+Enter goal state: 14523687_
+No solution found.
+
+Streaming output truncated to the last 5000 lines.
+Step 13696
+543
+716
+82_
+
+Step 13697
+543
+716
+8_2
+
+Step 13698
+543
+716
+_82
+
+Step 13699
+543
+_16
+782
